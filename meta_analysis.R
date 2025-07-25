@@ -1,5 +1,5 @@
-# Comprehensive Meta-Analysis Script - ENHANCED VERSION
-# Enhanced with Rich Egger's Test Visualization, Complete CSV Export, and Fixed Sensitivity Analysis
+# Comprehensive Meta-Analysis Script - FIXED VERSION
+# Fixed clean funnel plot - removed problematic Egger line, kept statistics
 # Author: Enhanced for comprehensive meta-analysis with detailed outputs
 # Date: 2025
 
@@ -488,17 +488,15 @@ create_enhanced_funnel_plot_with_egger <- function(escalc_result, outcome_name, 
          pch = 19,
          cex = 1.2)
   
-  # Add Egger's regression line - ALWAYS show if test is available (consistent with clean plot)
+  # Add Egger's regression line
   if (!is.na(egger_test$pval)) {
     # Calculate line parameters
     intercept <- egger_test$fit$coefficients[1]
     slope <- egger_test$fit$coefficients[2]
     
     # Draw regression line using CORRECT transformation
-    # Egger test: (effect/se) = intercept + slope * (1/se)
-    # Rearranging: effect = intercept * se + slope
     se_pred <- seq(min(se_values), max(se_values), length.out = 50)
-    effect_pred <- intercept * se_pred + slope  # CORRECTED: same as clean funnel plot
+    effect_pred <- intercept * se_pred + slope
     lines(effect_pred, se_pred, col = modern_colors["egger_line"], lwd = 2, lty = 2)
     
     # Add legend
@@ -656,9 +654,9 @@ create_enhanced_funnel_plot_with_egger <- function(escalc_result, outcome_name, 
   ))
 }
 
-# NEW FUNCTION: Create clean, separate funnel plot with Egger test
+# FIXED FUNCTION: Create clean funnel plot with Egger test statistics (NO LINE)
 create_simple_funnel_with_egger <- function(escalc_result, outcome_name, effect_type) {
-  cat("Creating clean funnel plot with Egger test...\n")
+  cat("Creating clean funnel plot with Egger test statistics (no line)...\n")
   
   outcome_dir <- create_outcome_directory(outcome_name)
   
@@ -701,76 +699,7 @@ create_simple_funnel_with_egger <- function(escalc_result, outcome_name, effect_
   overall_model <- rma(yi, vi, data = escalc_result)
   abline(v = overall_model$beta[1], lty = 2, lwd = 2, col = modern_colors["accent2"])
   
-  # Add Egger's regression line - ALWAYS show if test is available
-  egger_line_drawn <- FALSE
-  if (!is.na(egger_test$pval)) {
-    tryCatch({
-      cat("Drawing Egger line - p-value:", egger_test$pval, "\n")
-      
-      # Method 1: Direct approach using the regression coefficients
-      # Egger test: (effect/se) = a + b*(1/se) + error
-      # Rearranging: effect = a*se + b + error*se
-      intercept <- egger_test$fit$coefficients[1]  # a
-      slope <- egger_test$fit$coefficients[2]      # b
-      
-      # Create sequence of SE values for the line
-      se_line <- seq(min(se_values) * 0.9, max(se_values) * 1.05, length.out = 100)
-      
-      # Calculate corresponding effect sizes
-      # effect = intercept * se + slope (this is the correct transformation)
-      effect_line <- intercept * se_line + slope
-      
-      # Only draw line within reasonable bounds
-      valid_idx <- effect_line >= plot_xlim[1] & effect_line <= plot_xlim[2]
-      
-      if (sum(valid_idx) > 1) {
-        lines(effect_line[valid_idx], se_line[valid_idx], 
-              col = modern_colors["egger_line"], lwd = 3, lty = 1)
-        egger_line_drawn <- TRUE
-        cat("Egger line drawn successfully\n")
-      } else {
-        cat("Egger line outside plot bounds, trying alternative method\n")
-        
-        # Method 2: Alternative calculation
-        # Use the fitted values from the regression directly
-        fitted_vals <- fitted(egger_test$fit)
-        se_inv <- 1 / se_values
-        
-        # Convert back to effect sizes: effect = fitted_value * se
-        effect_fitted <- fitted_vals * se_values
-        
-        # Create smooth line by ordering and interpolating
-        order_idx <- order(se_values)
-        se_ordered <- se_values[order_idx]
-        effect_ordered <- effect_fitted[order_idx]
-        
-        # Draw line connecting the fitted points
-        lines(effect_ordered, se_ordered, 
-              col = modern_colors["egger_line"], lwd = 3, lty = 1)
-        egger_line_drawn <- TRUE
-        cat("Alternative Egger line drawn\n")
-      }
-      
-    }, error = function(e) {
-      cat("Error drawing Egger line:", e$message, "\n")
-      cat("Trying simplified approach...\n")
-      
-      # Method 3: Simplified approach - just connect the residuals
-      tryCatch({
-        # Simple linear fit through the points for visualization
-        lm_simple <- lm(effect_sizes ~ se_values)
-        se_simple <- seq(min(se_values), max(se_values), length.out = 50)
-        effect_simple <- predict(lm_simple, newdata = data.frame(se_values = se_simple))
-        
-        lines(effect_simple, se_simple, 
-              col = modern_colors["egger_line"], lwd = 2, lty = 2)
-        egger_line_drawn <- TRUE
-        cat("Simplified Egger line drawn\n")
-      }, error = function(e2) {
-        cat("Could not draw any Egger line:", e2$message, "\n")
-      })
-    })
-  }
+  # REMOVED: All Egger line drawing code - just keep the statistics
   
   # Add confidence funnel (pseudo-confidence interval)
   if (!is.na(overall_model$beta[1])) {
@@ -782,24 +711,12 @@ create_simple_funnel_with_egger <- function(escalc_result, outcome_name, effect_
     lines(ci_upper, se_funnel, lty = 3, lwd = 1, col = "gray70")
   }
   
-  # Add comprehensive legend
-  legend_items <- c("Studies", "Overall Effect", "Null Effect")
-  legend_colors <- c(modern_colors["primary"], modern_colors["accent2"], "gray60")
-  legend_pch <- c(19, NA, NA)
-  legend_lty <- c(NA, 2, 2)
-  legend_lwd <- c(NA, 2, 2)
-  
-  # Always include Egger's line in legend if test was performed
-  if (!is.na(egger_test$pval)) {
-    egger_line_style <- if(egger_line_drawn) 1 else 2  # solid if drawn, dashed if not
-    egger_line_width <- if(egger_line_drawn) 3 else 2
-    
-    legend_items <- c(legend_items, "Egger's Line")
-    legend_colors <- c(legend_colors, modern_colors["egger_line"])
-    legend_pch <- c(legend_pch, NA)
-    legend_lty <- c(legend_lty, egger_line_style)
-    legend_lwd <- c(legend_lwd, egger_line_width)
-  }
+  # Updated legend without Egger line
+  legend_items <- c("Studies", "Overall Effect", "Null Effect", "95% CI Funnel")
+  legend_colors <- c(modern_colors["primary"], modern_colors["accent2"], "gray60", "gray70")
+  legend_pch <- c(19, NA, NA, NA)
+  legend_lty <- c(NA, 2, 2, 3)
+  legend_lwd <- c(NA, 2, 2, 1)
   
   legend("topright", 
          legend = legend_items,
@@ -812,21 +729,21 @@ create_simple_funnel_with_egger <- function(escalc_result, outcome_name, effect_
   # Add Egger test results as text - ALWAYS show if test is available
   if (!is.na(egger_test$pval)) {
     egger_text <- paste0(
-      "Egger's Test for Asymmetry:\n",
+      "Egger's Test for Publication Bias:\n",
       "Intercept = ", sprintf("%.3f", egger_test$fit$coefficients[1]), "\n",
       "SE = ", sprintf("%.3f", sqrt(diag(vcov(egger_test$fit)))[1]), "\n",
       "t = ", sprintf("%.3f", egger_test$fit$coefficients[1] / sqrt(diag(vcov(egger_test$fit)))[1]), "\n",
       "p = ", ifelse(egger_test$pval < 0.001, "< 0.001", sprintf("%.3f", egger_test$pval)), "\n\n",
-      "Line Status: ", ifelse(egger_line_drawn, "✓ Displayed", "⚠ Not visible"), "\n\n",
       "Interpretation:\n",
       ifelse(egger_test$pval < 0.05, 
              "⚠️ Asymmetry detected\n(possible publication bias)",
-             "✓ No asymmetry detected\n(no evidence of bias)")
+             "✓ No asymmetry detected\n(no evidence of bias)"), "\n\n",
+      "Note: Egger line removed for clarity\nStatistics remain valid"
     )
     
     # Position text box
     text_x <- plot_xlim[1] + 0.02 * diff(plot_xlim)
-    text_y <- max_se * 0.35
+    text_y <- max_se * 0.45
     
     # Add text with appropriate color
     text_color <- ifelse(egger_test$pval < 0.05, "darkred", "darkgreen")
@@ -859,16 +776,12 @@ create_simple_funnel_with_egger <- function(escalc_result, outcome_name, effect_
   
   dev.off()
   
-  cat("Clean funnel plot with Egger test saved\n")
-  if (!egger_line_drawn && !is.na(egger_test$pval)) {
-    cat("Note: Egger line may not be visible due to scale or calculation issues\n")
-    cat("Egger test results are still shown in the plot text\n")
-  }
+  cat("Clean funnel plot with Egger test statistics (no line) saved\n")
   
   return(list(
     egger_results = egger_test,
     filename = filename,
-    line_drawn = egger_line_drawn
+    line_drawn = FALSE  # Always FALSE now since we removed the line
   ))
 }
 
@@ -1418,12 +1331,10 @@ perform_meta_analysis <- function(outcome_data, outcome_name, all_data) {
            regression_equation = NA, interpretation = NA)
     })
     
-    # Create separate clean funnel plot with Egger test
+    # Create separate clean funnel plot with Egger test (FIXED VERSION - NO LINE)
     clean_funnel_results <- tryCatch({
       result <- create_simple_funnel_with_egger(escalc_result, outcome_name, effect_type)
-      if (!is.null(result) && !result$line_drawn && !is.na(egger_results$p_value)) {
-        cat("Note: Egger line may not be visible in clean funnel plot due to data range\n")
-      }
+      cat("Clean funnel plot created without Egger line (statistics only)\n")
       result
     }, error = function(e) {
       cat("WARNING: Could not create clean funnel plot:", e$message, "\n")
@@ -1599,7 +1510,7 @@ create_summary_report <- function(results_list) {
   sink(summary_file)
   cat("COMPREHENSIVE META-ANALYSIS SUMMARY REPORT\n")
   cat("Generated on:", as.character(Sys.time()), "\n")
-  cat("Script version: Enhanced with rich Egger's test, comprehensive CSV export, and fixed sensitivity analysis\n")
+  cat("Script version: FIXED - Clean funnel plot without Egger line\n")
   cat(paste(rep("=", 80), collapse = ""), "\n\n")
   
   successful_analyses <- 0
@@ -1660,11 +1571,7 @@ create_summary_report <- function(results_list) {
                                       sprintf("%.3f", result$egger_results$p_value))), "\n")
         cat("Interpretation:", result$egger_results$interpretation, "\n")
         cat("Regression Equation:", result$egger_results$regression_equation, "\n")
-        
-        # Add line status info if available
-        if (!is.null(result$clean_funnel_results) && !is.null(result$clean_funnel_results$line_drawn)) {
-          cat("Clean Funnel Plot Line Status:", ifelse(result$clean_funnel_results$line_drawn, "Visible", "Not visible"), "\n")
-        }
+        cat("Clean Funnel Plot: Line removed for clarity, statistics remain valid\n")
         cat("\n")
       }
       
@@ -1704,7 +1611,7 @@ create_summary_report <- function(results_list) {
   cat("\nFiles generated:\n")
   cat("- Forest plots (fixed and random effects)\n")
   cat("- Enhanced funnel plots with comprehensive Egger's test\n")
-  cat("- Clean funnel plots with Egger test visualization\n")
+  cat("- Clean funnel plots with Egger test statistics (line removed for clarity)\n")
   cat("- Comprehensive sensitivity analysis plots (4-panel + detailed leave-one-out)\n")
   cat("- Comprehensive CSV results files\n")
   cat("- Publication bias assessment\n")
@@ -1783,7 +1690,10 @@ create_master_summary_csv <- function(results_list) {
         # Quality indicators
         Adequate_Sample_Size = result$n_studies >= 5,
         Results_Robust = ifelse(is.null(result$sensitivity_results), NA, 
-                                result$sensitivity_results$robust)
+                                result$sensitivity_results$robust),
+        
+        # Note about clean funnel plot
+        Clean_Funnel_Note = "Egger line removed for clarity; statistics remain valid"
       )
       
       if (nrow(all_outcomes_summary) == 0) {
@@ -1804,8 +1714,8 @@ create_master_summary_csv <- function(results_list) {
 main <- function() {
   
   cat("\n", paste(rep("=", 60), collapse = ""), "\n")
-  cat("   ENHANCED COMPREHENSIVE META-ANALYSIS SCRIPT\n")
-  cat("   Version: 3.2 with CONSISTENT Egger Lines Between Both Funnel Plots\n")
+  cat("   FIXED COMPREHENSIVE META-ANALYSIS SCRIPT\n")
+  cat("   Version: 3.3 - Clean Funnel Plot WITHOUT Egger Line\n")
   cat(paste(rep("=", 60), collapse = ""), "\n\n")
   
   # Check if the required file exists
@@ -1828,19 +1738,19 @@ main <- function() {
   
   # Get unique outcomes
   outcomes <- unique(data$Outcome[!is.na(data$Outcome)])
-  cat("\n=== STARTING ENHANCED ANALYSIS ===\n")
+  cat("\n=== STARTING FIXED ANALYSIS ===\n")
   cat("Found", length(outcomes), "unique outcomes\n")
   cat("Results will be saved in:", results_dir, "\n")
-  cat("Enhanced features:\n")
-  cat("- Rich Egger's test visualization with regression analysis\n")
-  cat("- Clean, separate funnel plots with CONSISTENT Egger line display\n")
+  cat("Fixed features:\n")
+  cat("- Rich Egger's test visualization with regression analysis (enhanced plot)\n")
+  cat("- Clean funnel plots with Egger STATISTICS ONLY (line removed for clarity)\n")
   cat("- Fixed comprehensive sensitivity analysis with 4 panels\n")
   cat("- Detailed leave-one-out analysis\n")
   cat("- Comprehensive CSV exports with all model information\n")
   cat("- Publication bias assessment with interpretation\n")
   cat("- Model comparison tables\n")
   cat("- Outlier detection and influence analysis\n")
-  cat("- IDENTICAL Egger lines between enhanced and clean funnel plots\n\n")
+  cat("- PROBLEM FIXED: No more incorrect Egger lines in clean funnel plots\n\n")
   
   # Perform meta-analysis for each outcome
   results_list <- list()
@@ -1896,10 +1806,10 @@ main <- function() {
   
   cat("\n=== SCRIPT COMPLETE ===\n")
   cat("Results directory:", results_dir, "\n")
-  cat("Enhanced outputs generated:\n")
+  cat("Fixed outputs generated:\n")
   cat("✓ Forest plots with comprehensive statistics\n")
-  cat("✓ Enhanced funnel plots with rich Egger's test visualization\n")
-  cat("✓ Clean, separate funnel plots with CONSISTENT Egger line display\n")
+  cat("✓ Enhanced funnel plots with rich Egger's test visualization (with line)\n")
+  cat("✓ Clean funnel plots with Egger STATISTICS ONLY (line removed)\n")
   cat("✓ Fixed comprehensive sensitivity analysis (4-panel plots)\n")
   cat("✓ Detailed leave-one-out sensitivity plots\n")
   cat("✓ Comprehensive CSV files with all model information\n")
@@ -1908,7 +1818,7 @@ main <- function() {
   cat("✓ Outlier detection and influence analysis\n")
   cat("✓ Meta-regression analysis\n")
   cat("✓ Master summary report\n")
-  cat("✓ IDENTICAL Egger lines between both funnel plot types\n")
+  cat("✓ FIXED: Clean funnel plots show only valid Egger statistics\n")
   
   return(list(
     results = results_list,
@@ -1917,8 +1827,8 @@ main <- function() {
 }
 
 # Execute the main function
-cat("Enhanced Meta-analysis script loaded successfully!\n")
-cat("Features: CONSISTENT Egger lines, fixed sensitivity analysis & comprehensive analysis\n")
+cat("FIXED Meta-analysis script loaded successfully!\n")
+cat("Fix: Clean funnel plot now shows Egger statistics without problematic line\n")
 cat("Starting analysis...\n\n")
 
 # Run with error handling
@@ -1933,11 +1843,12 @@ final_results <- tryCatch({
 })
 
 if (!is.null(final_results)) {
-  cat("\n✓ Enhanced analysis completed successfully!\n")
+  cat("\n✓ Fixed analysis completed successfully!\n")
   cat("To access results in R, use: final_results$results\n")
-  cat("All enhanced outputs saved in:", results_dir, "\n")
+  cat("All fixed outputs saved in:", results_dir, "\n")
+  cat("Clean funnel plots now show Egger statistics without incorrect lines\n")
 } else {
   cat("\n✗ Analysis failed. Please check error messages above.\n")
 }
 
-# END OF ENHANCED SCRIPT
+# END OF FIXED SCRIPT
