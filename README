@@ -1,36 +1,345 @@
-#  Meta-Analysis Script
+# 🔬✨ Enhanced Comprehensive Meta-Analysis Script ✨🔬
 
-A comprehensive R script for conducting publication-ready meta-analyses with advanced features including sensitivity analysis, publication bias assessment, and enhanced visualizations.
+<div align="center">
 
-![R](https://img.shields.io/badge/R-4.0%2B-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Version](https://img.shields.io/badge/version-3.2-orange)
+![Meta-Analysis Banner](https://img.shields.io/badge/🧬%20Meta--Analysis-Publication%20Ready-blueviolet?style=for-the-badge)
 
-## 🌟 Features
+**🚀 A powerful R script for conducting publication-ready meta-analyses with advanced statistical features 🚀**
 
-- **Comprehensive Meta-Analysis**: Both fixed and random effects models
-- **Enhanced Visualizations**: Forest plots, funnel plots with Egger's test
-- **Sensitivity Analysis**: Leave-one-out analysis, outlier detection, influence diagnostics
-- **Publication Bias Assessment**: Egger's test with multiple visualization methods
-- **CSV Export**: Complete results export for further analysis
-- **Error Handling**: Robust error handling and multiple fallback methods
-- **Sample Data Support**: Built-in sample data generation for testing
+---
 
-## 📊 Output Examples
+[![R Version](https://img.shields.io/badge/R-4.0%2B-276DC3?style=for-the-badge&logo=r&logoColor=white)](https://www.r-project.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/Version-3.2-brightgreen?style=for-the-badge)](https://github.com/yourusername/enhanced-meta-analysis/releases)
+[![Contributors](https://img.shields.io/badge/Contributors-Welcome-orange?style=for-the-badge)](https://github.com/yourusername/enhanced-meta-analysis/issues)
 
-| Forest Plot | Funnel Plot | Sensitivity Analysis |
-|-------------|-------------|---------------------|
-| ![Forest](images/sample_forest_plot.png) | ![Funnel](images/sample_funnel_plot.png) | ![Sensitivity](images/sample_sensitivity.png) |
+---
 
-## 🚀 Quick Start
+*🎯 Transform your research data into publication-ready meta-analyses with beautiful visualizations and robust statistical analysis*
+
+</div>
+
+---
+
+## 🌟✨ **Key Features** ✨🌟
+
+<table>
+<tr>
+<td width="50%">
+
+### 📊 **Statistical Analysis**
+- 🔢 **Fixed & Random Effects Models**
+- 📈 **Effect Size Calculations (MD/SMD)**
+- 🎯 **Heterogeneity Assessment (I², τ²)**
+- 📋 **Model Comparison & Selection**
+
+</td>
+<td width="50%">
+
+### 🎨 **Advanced Visualizations**
+- 🌲 **Publication-Ready Forest Plots**
+- 🔍 **Enhanced Funnel Plots**
+- ⚖️ **Consistent Egger's Test Lines**
+- 🎭 **Modern Color Palettes**
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🔍 **Sensitivity Analysis**
+- 🧪 **Leave-One-Out Analysis**
+- 🎯 **Outlier Detection**
+- 📊 **Influence Diagnostics**
+- 📈 **Cumulative Meta-Analysis**
+
+</td>
+<td width="50%">
+
+### 📝 **Export & Reporting**
+- 📊 **Comprehensive CSV Exports**
+- 📑 **Detailed Summary Reports**
+- 🔗 **Publication Bias Assessment**
+- 💾 **Organized Output Structure**
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🚀🎯 **Quick Start Guide** 🎯🚀
+
+<details>
+<summary><b>📥 Step 1: Installation</b></summary>
 
 ```r
-# Install required packages
+# 🔧 Install all required packages automatically
 source("requirements/install_packages.R")
+```
 
-# Load the script
+</details>
+
+<details>
+<summary><b>📊 Step 2: Prepare Your Data</b></summary>
+
+Your CSV file should follow this format:
+```csv
+Author,Year,Outcome,Intervention_Mean,Intervention_SD,Intervention_N,Control_Mean,Control_SD,Control_N
+Smith,2020,HbA1c,-1.2,0.8,75,-0.3,0.9,72
+Jones,2021,HbA1c,-1.5,1.0,80,-0.2,0.8,78
+```
+
+</details>
+
+<details>
+<summary><b>🚀 Step 3: Run Analysis</b></summary>
+
+```r
+# 📂 Load the enhanced meta-analysis script
 source("scripts/enhanced_meta_analysis.R")
 
-# Run with your data (CSV format required)
-# Place your data file in the working directory
-# The script will automatically detect and process it
+# ✨ The script automatically detects and processes your data!
+# 🎯 Default filename: "continuous_data - Copy.csv"
+```
+
+</details>
+
+---
+
+## 📊🎨 **Sample Outputs** 🎨📊
+
+<div align="center">
+
+| 🌲 **Forest Plot** | 🔍 **Funnel Plot** | 🧪 **Sensitivity Analysis** |
+|:---:|:---:|:---:|
+| ![Forest Plot](images/sample_forest_plot.png) | ![Funnel Plot](images/sample_funnel_plot.png) | ![Sensitivity](images/sample_sensitivity.png) |
+| *Fixed & Random Effects* | *Egger's Test Visualization* | *Leave-One-Out Analysis* |
+
+</div>
+
+---
+
+## 📋📊 **Data Requirements** 📊📋
+
+<div align="center">
+
+### ✅ **Required Columns**
+
+| Column | Description | Example |
+|:---:|:---:|:---:|
+| 👨‍🔬 `Author` | Study identifier | "Smith" |
+| 📅 `Year` | Publication year | 2020 |
+| 🎯 `Outcome` | Outcome measure | "HbA1c" |
+| 📊 `Intervention_Mean` | Treatment group mean | -1.2 |
+| 📊 `Intervention_SD` | Treatment group SD | 0.8 |
+| 👥 `Intervention_N` | Treatment sample size | 75 |
+| 📊 `Control_Mean` | Control group mean | -0.3 |
+| 📊 `Control_SD` | Control group SD | 0.9 |
+| 👥 `Control_N` | Control sample size | 72 |
+
+### 🔧 **Optional Columns** *(for enhanced analysis)*
+
+📏 `Outcome_Unit` • 💊 `Drug` • 💉 `Dosage` • 🏥 `Control` • 🌍 `Country` • ⏱️ `Study_Duration_weeks` • 🔬 `Disease_Stage`
+
+</div>
+
+---
+
+## 📁🎯 **Output Structure** 🎯📁
+
+```
+📂 Results_YYYYMMDD_HHMMSS/
+├── 📊 Outcome_Name_1/
+│   ├── 🌲 forest_plot_fixed_effects.png
+│   ├── 🌳 forest_plot_random_effects.png
+│   ├── 🔍 enhanced_funnel_plot_with_egger.png
+│   ├── 🎯 clean_funnel_plot_egger.png
+│   ├── 🧪 comprehensive_sensitivity_analysis.png
+│   ├── 📊 detailed_leave_one_out.png
+│   ├── 📋 comprehensive_study_results.csv
+│   ├── 📈 comprehensive_overall_results.csv
+│   ├── ⚖️ model_comparison.csv
+│   ├── 🔍 publication_bias_assessment.csv
+│   └── 🧪 sensitivity_analysis_summary.csv
+├── 📊 Outcome_Name_2/
+│   └── ... (same structure)
+├── 📈 meta_regression_comprehensive.png
+├── 📑 comprehensive_meta_analysis_report.txt
+└── 📊 master_outcomes_summary.csv
+```
+
+---
+
+## 🎯🔧 **System Requirements** 🔧🎯
+
+<div align="center">
+
+| Component | Requirement | Status |
+|:---:|:---:|:---:|
+| 💻 **R Version** | 4.0+ | ![Required](https://img.shields.io/badge/Required-red) |
+| 📦 **Packages** | Auto-installed | ![Automated](https://img.shields.io/badge/Automated-green) |
+| 🧠 **Memory** | 4GB+ recommended | ![Recommended](https://img.shields.io/badge/Recommended-yellow) |
+| 🎨 **Graphics** | Cairo (optional) | ![Optional](https://img.shields.io/badge/Optional-blue) |
+
+</div>
+
+---
+
+## 🆕🎉 **What's New in v3.2** 🎉🆕
+
+<div align="center">
+
+### 🔧 **Critical Fixes & Enhancements**
+
+</div>
+
+| Feature | Status | Description |
+|:---:|:---:|:---|
+| ✅ **Egger Line Fix** | ![Fixed](https://img.shields.io/badge/FIXED-brightgreen) | Resolved inconsistency between enhanced and clean funnel plots |
+| 📊 **Math Consistency** | ![Improved](https://img.shields.io/badge/IMPROVED-blue) | Identical mathematical transformation across all visualizations |
+| 🧪 **Sensitivity Analysis** | ![Enhanced](https://img.shields.io/badge/ENHANCED-purple) | Reliable 4-panel analysis with outlier detection |
+| 📋 **CSV Exports** | ![Comprehensive](https://img.shields.io/badge/COMPREHENSIVE-orange) | Complete model information and statistics |
+
+---
+
+## 🎓📚 **Documentation** 📚🎓
+
+<div align="center">
+
+| Guide | Description | Link |
+|:---:|:---:|:---:|
+| 🚀 **Quick Start** | Get running in 5 minutes | [`docs/quick_start.md`](docs/quick_start.md) |
+| 👥 **User Guide** | Detailed usage instructions | [`docs/user_guide.md`](docs/user_guide.md) |
+| 🔧 **Installation** | Setup and requirements | [`docs/installation.md`](docs/installation.md) |
+| 🧠 **Methodology** | Statistical methods explained | [`docs/methodology.md`](docs/methodology.md) |
+| 🆘 **Troubleshooting** | Common issues and solutions | [`docs/troubleshooting.md`](docs/troubleshooting.md) |
+
+</div>
+
+---
+
+## 🏆🎯 **Why Choose This Script?** 🎯🏆
+
+<div align="center">
+
+### 🌟 **Unique Advantages** 🌟
+
+</div>
+
+<table>
+<tr>
+<td align="center" width="25%">
+
+### 🎨
+**Beautiful Plots**
+Publication-ready visualizations with modern design
+
+</td>
+<td align="center" width="25%">
+
+### 🔍
+**Robust Analysis**
+Comprehensive sensitivity and bias assessment
+
+</td>
+<td align="center" width="25%">
+
+### 📊
+**Complete Export**
+All results in organized CSV files
+
+</td>
+<td align="center" width="25%">
+
+### 🛡️
+**Error Proof**
+Extensive error handling and fallback methods
+
+</td>
+</tr>
+</table>
+
+---
+
+## 📝✨ **Citation** ✨📝
+
+<div align="center">
+
+If you use this script in your research, please cite:
+
+```bibtex
+@software{enhanced_meta_analysis_2025,
+  author = {Your Name},
+  title = {Enhanced Comprehensive Meta-Analysis Script},
+  year = {2025},
+  version = {3.2},
+  url = {https://github.com/yourusername/enhanced-meta-analysis}
+}
+```
+
+</div>
+
+---
+
+## 🤝💡 **Contributing** 💡🤝
+
+<div align="center">
+
+**We welcome contributions!** 🎉
+
+[![Issues](https://img.shields.io/badge/🐛%20Report-Issues-red?style=for-the-badge)](https://github.com/yourusername/enhanced-meta-analysis/issues)
+[![Features](https://img.shields.io/badge/💡%20Request-Features-blue?style=for-the-badge)](https://github.com/yourusername/enhanced-meta-analysis/issues)
+[![Pull Requests](https://img.shields.io/badge/🔧%20Submit-Pull%20Requests-green?style=for-the-badge)](https://github.com/yourusername/enhanced-meta-analysis/pulls)
+
+</div>
+
+---
+
+## 📧👨‍💻 **Contact & Support** 👨‍💻📧
+
+<div align="center">
+
+| Contact Method | Information |
+|:---:|:---:|
+| 👨‍💻 **Author** | [Your Name] |
+| 📧 **Email** | [your.email@domain.com] |
+| 🐦 **Twitter** | [@yourusername] |
+| 💼 **LinkedIn** | [Your LinkedIn] |
+
+---
+
+### 🌟 **Show Your Support** 🌟
+
+If this script helped your research, please give it a ⭐️!
+
+[![GitHub stars](https://img.shields.io/github/stars/yourusername/enhanced-meta-analysis?style=social)](https://github.com/yourusername/enhanced-meta-analysis/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/yourusername/enhanced-meta-analysis?style=social)](https://github.com/yourusername/enhanced-meta-analysis/network)
+
+</div>
+
+---
+
+## 📄⚖️ **License** ⚖️📄
+
+<div align="center">
+
+This project is licensed under the **MIT License** - see the [`LICENSE`](LICENSE) file for details.
+
+![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)
+
+</div>
+
+---
+
+<div align="center">
+
+### 🎉 **Thank you for using Enhanced Meta-Analysis Script!** 🎉
+
+*Made with ❤️ for the research community*
+
+---
+
+**📊 Happy Meta-Analyzing! 📊**
+
+</div>
