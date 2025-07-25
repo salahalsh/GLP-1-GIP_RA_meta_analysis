@@ -1,0 +1,36 @@
+#  Meta-Analysis Script
+
+A comprehensive R script for conducting publication-ready meta-analyses with advanced features including sensitivity analysis, publication bias assessment, and enhanced visualizations.
+
+![R](https://img.shields.io/badge/R-4.0%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Version](https://img.shields.io/badge/version-3.2-orange)
+
+## 🌟 Features
+
+- **Comprehensive Meta-Analysis**: Both fixed and random effects models
+- **Enhanced Visualizations**: Forest plots, funnel plots with Egger's test
+- **Sensitivity Analysis**: Leave-one-out analysis, outlier detection, influence diagnostics
+- **Publication Bias Assessment**: Egger's test with multiple visualization methods
+- **CSV Export**: Complete results export for further analysis
+- **Error Handling**: Robust error handling and multiple fallback methods
+- **Sample Data Support**: Built-in sample data generation for testing
+
+## 📊 Output Examples
+
+| Forest Plot | Funnel Plot | Sensitivity Analysis |
+|-------------|-------------|---------------------|
+| ![Forest](images/sample_forest_plot.png) | ![Funnel](images/sample_funnel_plot.png) | ![Sensitivity](images/sample_sensitivity.png) |
+
+## 🚀 Quick Start
+
+```r
+# Install required packages
+source("requirements/install_packages.R")
+
+# Load the script
+source("scripts/enhanced_meta_analysis.R")
+
+# Run with your data (CSV format required)
+# Place your data file in the working directory
+# The script will automatically detect and process it
